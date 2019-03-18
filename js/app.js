@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 symbol = gamer === true ? 'X' : 'O';
                 //console.log(symbol,gamer,$(this).data('xy'));
                 $(this).html(symbol);
-                checkForWinner()
                 let color = symbol==='X'?'green':'yellow';
-                $(this).css('background',color)
+                $(this).css('background',color);
+                checkForWinner();
             }
         });
     }
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     function winner(score){
-        if(score==='X'){xScore++;console.log(xScore,'x')}else{oScore++;console.log(oScore,'o')}
+        if(score==='X'){xScore++;$('.xScore').text(xScore)}else{oScore++;$('.oScore').text(oScore);};
         $('.winner__alert').toggleClass('winner').html(`<p>the winner is </p><spam>${symbol}</spam><p> click here to play again</p>`);
     }
 
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     $square.eq(i+40).css("background-color","red");
                     $square.eq(i+60).css("background-color","red");
                     $square.eq(i+80).css("background-color","red");
-                winner();
+                winner($square.eq(i).text());
             }
             //checking for winner on a diagonal forward plane
             else if ($square.eq(i).text() !== '' &&
@@ -86,21 +86,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     $square.eq(i+42).css("background-color","red");
                     $square.eq(i+63).css("background-color","red");
                     $square.eq(i+84).css("background-color","red");
-                winner();
+                winner($square.eq(i).text());
             }
             //checking for winner in a minus diagonal option
             else if ($square.eq(i).text() !== '' &&
                 $square.eq(i).text() === $square.eq(i + 19).text() &&
                 $square.eq(i + 19).text() === $square.eq(i + 38).text() &&
                 $square.eq(i + 38).text() === $square.eq(i + 57).text() &&
-                $square.eq(i + 57).text() === $square.eq(i + 76).text() &&
-                i%boardSize<16) {
+                $square.eq(i + 57).text() === $square.eq(i + 76).text() 
+                ) {
                     $square.eq(i).css("background-color","red");
                     $square.eq(i+19).css("background-color","red");
                     $square.eq(i+38).css("background-color","red");
                     $square.eq(i+57).css("background-color","red");
                     $square.eq(i+76).css("background-color","red");
-                winner();
+                winner($square.eq(i).text());
             }
         }
     }
