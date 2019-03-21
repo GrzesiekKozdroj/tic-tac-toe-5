@@ -93,7 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 $square.eq(i).text() === $square.eq(i + 19).text() &&
                 $square.eq(i + 19).text() === $square.eq(i + 38).text() &&
                 $square.eq(i + 38).text() === $square.eq(i + 57).text() &&
-                $square.eq(i + 57).text() === $square.eq(i + 76).text() 
+                $square.eq(i + 57).text() === $square.eq(i + 76).text() &&
+                i%boardSize>3
                 ) {
                     $square.eq(i).css("background-color","red");
                     $square.eq(i+19).css("background-color","red");
@@ -102,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     $square.eq(i+76).css("background-color","red");
                 winner($square.eq(i).text());
             }
+            //checking if board is completely full
         }
     }
 
