@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let oScore = 0;
     let symbol = gamer === true ? 'X' : 'O';
     let boardSize = 20;
+    let moveCount;
 
     //fills the board with boxes with coordinates
     function makeNewBoard() {
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 $('#board').append(square);
             }
         }
+        moveCount = 1;
         addClicks();
     }
 
@@ -30,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let color = symbol==='X'?'green':'yellow';
                 $(this).css('background',color);
                 checkForWinner();
+                moveCount++;
             }
         });
     }
@@ -104,6 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 winner($square.eq(i).text());
             }
             //checking if board is completely full
+            else if (moveCount === 400){
+                makeNewBoard();
+            }
         }
     }
 
