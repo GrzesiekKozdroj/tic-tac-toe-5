@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let gamer = true;
     let xScore = 0;
     let oScore = 0;
-    let symbol = gamer === true ? 'X' : 'O';
+    let symbol = gamer === true ? 'x' : 'o';
     let boardSize = 20;
     let moveCount;
 
@@ -17,11 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         moveCount = 1;
-        addClicks();
+        addClicks();addHover()
     }
 
+
+
     //on kilck places a symbol of one of the players
-    function addClicks() {
+    function addClicks() {            
         $('.square').on('click', function () {
             if ($(this).text() === '') {
                 $(this).toggleClass('rotator');
@@ -36,10 +38,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    function addHover(){
+        $('.square').mouseenter(function(){
+            if($(this).text()===''){  $(this).css('background-color',!gamer?'green':'yellow')   }
+        })
+        $('.square').mouseleave(function(){
+            if($(this).text()===''){  $(this).css('background-color','white').toggleClass('rotator')   }
+        })
+    }
+
+
+    
 
     $('.winner__alert').on('click',()=>{
         makeNewBoard();
-        $('.winner__alert').toggleClass('winner');
+        $('.winner__alert').toggleClass('winner').text('');
     })
 
     function winner(score){
@@ -112,9 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
+    
     makeNewBoard();
-    addClicks();
-
+    addHover();
 
 })
