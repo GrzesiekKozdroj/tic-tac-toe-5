@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //on kilck places a symbol of one of the players
     function addClicks() {            
-        $('.square').on('click', function () {
+        $('.square').on('click', function (e) {
+            e.preventDefault();
             if ($(this).text() === '') {
                 $(this).toggleClass('rotator');
                 gamer = gamer === true ? false : true;
@@ -35,6 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 $(this).css('background',color);
                 checkForWinner();
                 moveCount++;
+                let  myTimOut = setTimeout(()=>{$(this).removeClass('rotator')},2000);
+                myTimOut();
+                clearTimeout(myTimOut)
             }
         });
     }
@@ -43,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if($(this).text()===''){  $(this).css('background-color',!gamer?'green':'yellow')   }
         })
         $('.square').mouseleave(function(){
-            if($(this).text()===''){  $(this).css('background-color','white').toggleClass('rotator')   }
+            if($(this).text()===''){  $(this).css('background-color','rgb(235, 235, 207)')   }
         })
     }
 
