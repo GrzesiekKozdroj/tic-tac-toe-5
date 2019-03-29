@@ -56,7 +56,7 @@ section{
       }
   }
 
-  .winner{animation:1s forwards courtainFall;}
+  .winner{animation:0.5s forwards courtainFall;}
   .winner__alert{
       position:absolute;
       width:99vh;
@@ -112,5 +112,5 @@ section{
     }
 }
 .rotator{
-    &:hover{animation: 1s forwards roattion;}
+    &:hover{animation: 0.4s forwards roattion;}
 }

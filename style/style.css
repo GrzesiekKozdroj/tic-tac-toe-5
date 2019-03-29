@@ -66,7 +66,7 @@ section {
 }
 
 .winner {
-  animation: 1s forwards courtainFall;
+  animation: 0.5s forwards courtainFall;
 }
 
 .winner__alert {
@@ -129,5 +129,5 @@ spam {
 }
 
 .rotator:hover {
-  animation: 1s forwards roattion;
+  animation: 0.4s forwards roattion;
 }
