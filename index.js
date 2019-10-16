@@ -5,7 +5,6 @@ const controller = require('./js/controller');
 const serv = require('http').Server(app);
 let SOCKET_LIST = {};
 let PLAYER_LIST ={};
-let board_update, hover_in, hover_out;
 
 const io = require('socket.io')(serv,{});
 
