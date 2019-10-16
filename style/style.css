@@ -30,6 +30,7 @@ section {
 
 .score h3 .oScore {
   color: yellow;
+  margin-right: 10px;
 }
 
 .score h3 .xScore {

@@ -1,11 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const socket = io();
+
     let gamer = true;
     let xScore = 0;
     let oScore = 0;
-    let symbol = gamer === true ? 'x' : 'o';
+    let symbol = 'x';
     let boardSize = 20;
     let moveCount;
+    let ajdee = 0;
+    socket.on('id',(data)=>{
+        if(ajdee===0){
+            ajdee=data.id;
+            gamer=data.turn;
+        }
+    })
 
     //fills the board with boxes with coordinates
     function makeNewBoard() {
@@ -26,32 +35,70 @@ document.addEventListener('DOMContentLoaded', () => {
     function addClicks() {            
         $('.square').on('click', function (e) {
             e.preventDefault();
-            if ($(this).text() === '') {
+            if ($(this).text() === '' && gamer === true) {
                 $(this).toggleClass('rotator');
-                gamer = gamer === true ? false : true;
-                symbol = gamer === true ? 'X' : 'O';
+                symbol = 'X';
                 //console.log(symbol,gamer,$(this).data('xy'));
                 $(this).html(symbol);
                 let color = symbol==='X'?'green':'yellow';
                 $(this).css('background',color);
                 checkForWinner();
                 moveCount++;
-                let  myTimOut = setTimeout(()=>{$(this).removeClass('rotator')},2000);
+                let  myTimOut = ()=>{setTimeout(()=>{$(this).removeClass('rotator')},2000);}
                 myTimOut();
-                clearTimeout(myTimOut)
+                clearTimeout(myTimOut);
+                let coords = $(this).data("xy");
+                gamer = false
+                socket.emit('board update',{coords:coords,id:ajdee});
             }
         });
     }
     function addHover(){
         $('.square').mouseenter(function(){
-            if($(this).text()===''){  $(this).css('background-color',!gamer?'green':'yellow')   }
+            if($(this).text()===''){  $(this).css('background-color','green');
+            let coords = $(this).data("xy");
+            socket.emit('hoverin',coords)   }
         })
         $('.square').mouseleave(function(){
-            if($(this).text()===''){  $(this).css('background-color','rgb(235, 235, 207)')   }
+            if($(this).text()===''){  $(this).css('background-color','rgb(235, 235, 207)');
+            let coords = $(this).data("xy");
+            socket.emit('hoverout',coords)  }
         })
     }
 
+    socket.on('server update',(data)=>{
+        data.forEach(player=>{
+            if(ajdee!==player.origin_id){
+                $(`div[data-xy = "${ player.board_update }"]`).text('O').css('background','yellow');
+                gamer = true;
+                checkForWinner();
+            }
+        })
+    });
 
+    socket.on('server hoverin',(data)=>{
+        data.forEach(player=>{
+            if(ajdee!==player.origin_id){
+                $(`div[data-xy = "${player.hoverin}"]`).css('backround','yellow');
+                console.log('recieving')
+            }
+        })
+    });
+
+    socket.on('server hoverout', (data)=>{
+        data.forEach(player=>{
+            if(ajdee!==player.origin_id){
+                if($(`div[data-xy = "${player.hoverout}"]`).text()==='X'){
+                    $(`div[data-xy = "${player.hoverout}"]`).css('backround','green');
+                }else if($(`div[data-xy = "${player.hoverout}"]`).text()==="O"){
+                    $(`div[data-xy = "${player.hoverout}"]`).css('backround','yellow');
+                }else{
+                    $(`div[data-xy = "${player.hoverout}"]`).css('backround','rgb(235, 235, 207)');
+                }
+            }
+            console.log('recievong')
+        })
+    })
     
 
     $('.winner__alert').on('click',()=>{
