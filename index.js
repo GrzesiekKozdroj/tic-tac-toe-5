@@ -22,12 +22,12 @@ let serverMSG = (message, origin_id)=>{
     let pack = [];
     for(let a in PLAYER_LIST){
         let player = PLAYER_LIST[a];
-        player.turn = player.turn && message === 'board update' ?false:true;
+        player.turn = player.turn && message === 'server update' ?false:true;
         pack.push({board_update:player.board_update, hover_in:player.hover_in, hover_out:player.hover_out,turn:player.turn,id:player.id, origin_id:origin_id});
     }
     for(let b in SOCKET_LIST){
         let socket = SOCKET_LIST[b];
-        socket.emit('server update',pack);
+        socket.emit(message,pack);
     }
 }
 
@@ -47,7 +47,7 @@ io.sockets.on('connection', (socket)=>{
             PLAYER_LIST[player].board_update = '';
         }
         PLAYER_LIST[socket.id].board_update = data.coords;
-        serverMSG('board udate',data.id);
+        serverMSG('server update',data.id);
     });
     socket.on('hoverin',(data)=>{
         PLAYER_LIST[socket.id].hover_in = data.coords;

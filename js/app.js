@@ -3,9 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const socket = io();
 
     let gamer = true;
+    let offline = true;
     let xScore = 0;
     let oScore = 0;
-    let symbol = 'x';
+    let symbol = 'X';
     let boardSize = 20;
     let moveCount;
     let ajdee = 0;
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(ajdee===0){
             ajdee=data.id;
             gamer=data.turn;
+            offline = false;
         }
     })
 
@@ -35,9 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function addClicks() {            
         $('.square').on('click', function (e) {
             e.preventDefault();
-            if ($(this).text() === '' && gamer === true) {
+            if ($(this).text() === '' && (gamer === true || offline)) {
                 $(this).toggleClass('rotator');
-                symbol = 'X';
+                if(!offline){
+                    gamer = false;
+                    symbol = 'X';
+                }else{
+                    gamer = gamer === true ? false : true;
+                    symbol = gamer === true ? 'X' : 'O';
+                }
                 //console.log(symbol,gamer,$(this).data('xy'));
                 $(this).html(symbol);
                 let color = symbol==='X'?'green':'yellow';
@@ -48,15 +56,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 myTimOut();
                 clearTimeout(myTimOut);
                 let coords = $(this).data("xy");
-                gamer = false
                 socket.emit('board update',{coords:coords,id:ajdee});
             }
         });
     }
     function addHover(){
         $('.square').mouseenter(function(){
-            if($(this).text()===''){  $(this).css('background-color','green');
-            let coords = $(this).data("xy");
+            if($(this).text()===''){ 
+                if(!gamer && offline)       $(this).css('background-color','green'); 
+                else if(gamer && offline) $(this).css('background-color','yellow');
+                else if(!offline)          $(this).css('background-color','green');
+            let coords = $(this).data("xy"); 
             socket.emit('hoverin',coords)   }
         })
         $('.square').mouseleave(function(){
@@ -71,7 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if(ajdee!==player.origin_id){
                 $(`div[data-xy = "${ player.board_update }"]`).text('O').css('background','yellow');
                 gamer = true;
+                moveCount++;
                 checkForWinner();
+                let  myTimOut = ()=>{setTimeout(()=>{$(this).removeClass('rotator')},2000);}
+                myTimOut();
+                clearTimeout(myTimOut);
             }
         })
     });
