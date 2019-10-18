@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 $('#board').append(square);
             }
         }
+        $('#board').off();
         moveCount = 1;
         addClicks();addHover()
     }
@@ -44,19 +45,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     symbol = 'X';
                 }else{
                     gamer = gamer === true ? false : true;
-                    symbol = gamer === true ? 'X' : 'O';
+                    symbol = gamer === true ? 'X' : "O";
                 }
-                //console.log(symbol,gamer,$(this).data('xy'));
-                $(this).html(symbol);
+                $(this).text(symbol);
                 let color = symbol==='X'?'green':'yellow';
                 $(this).css('background',color);
-                checkForWinner();
                 moveCount++;
-                let  myTimOut = ()=>{setTimeout(()=>{$(this).removeClass('rotator')},2000);}
-                myTimOut();
-                clearTimeout(myTimOut);
                 let coords = $(this).data("xy");
                 socket.emit('board update',{coords:coords,id:ajdee});
+                checkForWinner();
             }
         });
     }
@@ -65,64 +62,67 @@ document.addEventListener('DOMContentLoaded', () => {
             if($(this).text()===''){ 
                 if(!gamer && offline)       $(this).css('background-color','green'); 
                 else if(gamer && offline) $(this).css('background-color','yellow');
-                else if(!offline)          $(this).css('background-color','green');
-            let coords = $(this).data("xy"); 
-            socket.emit('hoverin',coords)   }
+                else if(!offline)          $(this).css('background-color','green');}
+            let coords = $(this).data("xy");
+            socket.emit('hoverin',{coords:coords,id:ajdee})   
         })
         $('.square').mouseleave(function(){
-            if($(this).text()===''){  $(this).css('background-color','rgb(235, 235, 207)');
+            if($(this).text()===''){  $(this).css('background-color','rgb(235, 235, 207)');}
             let coords = $(this).data("xy");
-            socket.emit('hoverout',coords)  }
+            socket.emit('hoverout',{coords:coords,id:ajdee})  
         })
     }
 
     socket.on('server update',(data)=>{
-        data.forEach(player=>{
-            if(ajdee!==player.origin_id){
-                $(`div[data-xy = "${ player.board_update }"]`).text('O').css('background','yellow');
-                gamer = true;
                 moveCount++;
                 checkForWinner();
-                let  myTimOut = ()=>{setTimeout(()=>{$(this).removeClass('rotator')},2000);}
-                myTimOut();
-                clearTimeout(myTimOut);
+        data.forEach(player=>{
+            if(ajdee!==player.origin_id){
+                $(`div[data-xy = "${ player.board_update }"]`).text("O").css('background','yellow').addClass('incomin');
+                gamer = true;
             }
         })
     });
+    socket.on('make new board', ()=>{makeNewBoard()})
 
     socket.on('server hoverin',(data)=>{
         data.forEach(player=>{
-            if(ajdee!==player.origin_id){
-                $(`div[data-xy = "${player.hoverin}"]`).css('backround','yellow');
-                console.log('recieving')
+            if(ajdee!==player.origin_id && player.hover_in!==''){
+                if($(`div[data-xy = "${player.hover_in}"]`).text()=='X'){
+                    $(`div[data-xy = "${player.hover_in}"]`).css('transform','scale(.9)');
+                }else if($(`div[data-xy = "${player.hover_in}"]`).text()==="O"){
+                    $(`div[data-xy = "${player.hover_in}"]`).removeClass('incomin').css('transform','scale(.9)');
+                }else{
+                    $(`div[data-xy = "${player.hover_in}"]`).css('background','yellow').css('transform','scale(.9)');
+                }
             }
         })
     });
 
     socket.on('server hoverout', (data)=>{
         data.forEach(player=>{
-            if(ajdee!==player.origin_id){
-                if($(`div[data-xy = "${player.hoverout}"]`).text()==='X'){
-                    $(`div[data-xy = "${player.hoverout}"]`).css('backround','green');
-                }else if($(`div[data-xy = "${player.hoverout}"]`).text()==="O"){
-                    $(`div[data-xy = "${player.hoverout}"]`).css('backround','yellow');
+            if(ajdee!==player.origin_id && player.hover_out!==''){
+                if($(`div[data-xy = "${player.hover_out}"]`).text()==='X'){
+                    $(`div[data-xy = "${player.hover_out}"]`).css('transform','scale(1)');
+                }else if($(`div[data-xy = "${player.hover_out}"]`).text()==="O"){
+                    $(`div[data-xy = "${player.hover_out}"]`).css('transform','scale(1)');
                 }else{
-                    $(`div[data-xy = "${player.hoverout}"]`).css('backround','rgb(235, 235, 207)');
+                    $(`div[data-xy = "${player.hover_out}"]`).css('background','rgb(235, 235, 207)').css('transform','scale(1)');
                 }
             }
-            console.log('recievong')
         })
     })
     
 
     $('.winner__alert').on('click',()=>{
-        makeNewBoard();
+        if(!offline){ socket.emit( 'make new board')  } else { makeNewBoard() };
         $('.winner__alert').toggleClass('winner').text('');
     })
 
     function winner(score){
-        if(score==='X'){xScore++;$('.xScore').text(xScore)}else{oScore++;$('.oScore').text(oScore);};
-        $('.winner__alert').toggleClass('winner').html(`<p>the winner is </p><spam>${symbol}</spam><p> click here to play again</p>`);
+        let c
+        if(score==='X'){xScore++;$('.xScore').text(xScore); c = 'X'}else{oScore++;$('.oScore').text(oScore);c='O'};
+        $('.winner__alert').toggleClass('winner').html(`<p>the winner is </p><spam>${c}</spam><p> click here to play again</p>`);
     }
 
     function checkForWinner() {
@@ -192,6 +192,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     makeNewBoard();
-    addHover();
 
 })

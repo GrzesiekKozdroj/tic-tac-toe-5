@@ -37,6 +37,25 @@ section {
   color: yellow;
 }
 
+@keyframes incomer {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  75% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.incomin {
+  animation: 1s forwards incomer;
+}
+
 @media only screen and (max-width: 800px) {
   section {
     flex-flow: column;
@@ -53,9 +72,12 @@ section {
 }
 
 @keyframes roattion {
-  50% {
+  99% {
     transform: rotate(360deg);
     scale: 1.4;
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -129,6 +151,6 @@ spam {
   scale: 1.1;
 }
 
-.rotator:hover {
+.rotator {
   animation: 0.4s forwards roattion;
 }
