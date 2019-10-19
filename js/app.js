@@ -16,8 +16,25 @@ document.addEventListener('DOMContentLoaded', () => {
             gamer=data.turn;
             offline = false;
         }
-    })
+    });
+    const msg = $("#msg");
+    const chatForm = $("#chat-form");
+    const chatInput = $("#chat-input");
 
+    chatForm.on('submit', (e)=>{
+        e.preventDefault();
+        socket.emit('msg recieved',chatInput.val());
+        chatInput.val('');
+    });
+    
+    socket.on('chat msg',(message)=>{
+        msg.prepend(`
+        <div class="singleMessage">
+            <div class="span" style="color:rgb(85, 36, 126)">${message.playerName}:</div>
+            <div class="span" style="inline-block">${message.messageVal}</div>
+        </div>
+        `)
+    })
     //fills the board with boxes with coordinates
     function makeNewBoard() {
         $('#board').empty()

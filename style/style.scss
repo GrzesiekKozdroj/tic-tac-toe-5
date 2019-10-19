@@ -9,6 +9,28 @@ section{
     display:flex;
     justify-content: center;
 }
+#msg{
+    border:1px solid darkolivegreen;
+    width:30vw;
+    height:10vh;
+    background-color:lightslategray;
+    overflow-y:scroll;
+    .span{
+        font-size:1.6vw;
+        word-wrap:break-word;
+
+    }
+}
+#chat-input{
+    width:30vw;
+}
+.singleMessage{
+    display:flex;
+    justify-content: space-between;
+    width:100%;
+    min-height:3.5vh;
+    overflow: auto;
+}
 .score{
     display:flex;
     flex-flow:column;

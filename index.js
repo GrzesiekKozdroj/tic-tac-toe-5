@@ -76,6 +76,12 @@ io.sockets.on('connection', (socket) => {
         PLAYER_LIST[socket.id].hover_out = data.coords;
         serverMSG('server hoverout', data.id);
     });
+    socket.on('msg recieved',(message)=>{
+        let playerName = (""+socket.id).slice(2,7);
+        for(let i in SOCKET_LIST){
+            SOCKET_LIST[i].emit('chat msg', {playerName:playerName, messageVal:message})
+        }
+    })
     socket.on('disconnect', () => {
         delete SOCKET_LIST[socket.id];
         delete PLAYER_LIST[socket.id];
