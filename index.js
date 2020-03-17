@@ -100,4 +100,5 @@ controller(app);
 
 //listen to port
 serv.listen(3001);
+console.log('http://localhost:3001/')
 
