@@ -1,4 +1,6 @@
 # tic-tac-toe-5
+-jQuery
+-node.js
 A simple game I used to enjoy in primary school. <br/>
 Its aim is to place 5 squares or circles in one row.<br/>
 in below deployment game mode is hot seats:<br/>
