@@ -1,12 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     const socket = io();
-
+    let s1 = 'X'
+    let s2 = 'O'
+    let c1 = 'green'
+    let c2 = 'yellow'
     let gamer = true;
     let offline = true;
     let xScore = 0;
     let oScore = 0;
-    let symbol = 'X';
+    let symbol = s1;
     let boardSize = 20;
     let moveCount;
     let ajdee = 0;
@@ -59,13 +62,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 $(this).toggleClass('rotator');
                 if(!offline){
                     gamer = false;
-                    symbol = 'X';
+                    symbol = s1;
                 }else{
                     gamer = gamer === true ? false : true;
-                    symbol = gamer === true ? 'X' : "O";
+                    symbol = gamer === true ? s1 : s2;
                 }
                 $(this).text(symbol);
-                let color = symbol==='X'?'green':'yellow';
+                let color = symbol===s1?c1:c2;
                 $(this).css('background',color);
                 moveCount++;
                 let coords = $(this).data("xy");
@@ -77,9 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function addHover(){
         $('.square').mouseenter(function(){
             if($(this).text()===''){ 
-                if(!gamer && offline)       $(this).css('background-color','green'); 
-                else if(gamer && offline) $(this).css('background-color','yellow');
-                else if(!offline)          $(this).css('background-color','green');}
+                if(!gamer && offline)       $(this).css('background-color',c1); 
+                else if(gamer && offline) $(this).css('background-color',c2);
+                else if(!offline)          $(this).css('background-color',c1);}
             let coords = $(this).data("xy");
             socket.emit('hoverin',{coords:coords,id:ajdee})   
         })
@@ -95,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkForWinner();
         data.forEach(player=>{
             if(ajdee!==player.origin_id){
-                $(`div[data-xy = "${ player.board_update }"]`).text("O").css('background','yellow').addClass('incomin');
+                $(`div[data-xy = "${ player.board_update }"]`).text(s2).css('background',c2).addClass('incomin');
                 gamer = true;
             }
         })
@@ -105,12 +108,12 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('server hoverin',(data)=>{
         data.forEach(player=>{
             if(ajdee!==player.origin_id && player.hover_in!==''){
-                if($(`div[data-xy = "${player.hover_in}"]`).text()=='X'){
+                if($(`div[data-xy = "${player.hover_in}"]`).text()==s1){
                     $(`div[data-xy = "${player.hover_in}"]`).css('transform','scale(.9)');
-                }else if($(`div[data-xy = "${player.hover_in}"]`).text()==="O"){
+                }else if($(`div[data-xy = "${player.hover_in}"]`).text()===s2){
                     $(`div[data-xy = "${player.hover_in}"]`).removeClass('incomin').css('transform','scale(.9)');
                 }else{
-                    $(`div[data-xy = "${player.hover_in}"]`).css('background','yellow').css('transform','scale(.9)');
+                    $(`div[data-xy = "${player.hover_in}"]`).css('background',c2).css('transform','scale(.9)');
                 }
             }
         })
@@ -119,9 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('server hoverout', (data)=>{
         data.forEach(player=>{
             if(ajdee!==player.origin_id && player.hover_out!==''){
-                if($(`div[data-xy = "${player.hover_out}"]`).text()==='X'){
+                if($(`div[data-xy = "${player.hover_out}"]`).text()===s1){
                     $(`div[data-xy = "${player.hover_out}"]`).css('transform','scale(1)');
-                }else if($(`div[data-xy = "${player.hover_out}"]`).text()==="O"){
+                }else if($(`div[data-xy = "${player.hover_out}"]`).text()===s2){
                     $(`div[data-xy = "${player.hover_out}"]`).css('transform','scale(1)');
                 }else{
                     $(`div[data-xy = "${player.hover_out}"]`).css('background','rgb(235, 235, 207)').css('transform','scale(1)');
@@ -138,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function winner(score){
         let c
-        if(score==='X'){xScore++;$('.xScore').text(xScore); c = 'X'}else{oScore++;$('.oScore').text(oScore);c='O'};
+        if(score===s1){xScore++;$('.xScore').text(xScore); c = s1}else{oScore++;$('.oScore').text(oScore);c=s2};
         $('.winner__alert').toggleClass('winner').html(`<p>the winner is </p><spam>${c}</spam><p> click here to play again</p>`);
     }
 
