@@ -34,12 +34,13 @@ section{
 .score{
     display:flex;
     flex-flow:column;
-    width:10vw;
+    width:5vw;
     height:15vh;
     align-items: flex-end;
     text-align: right;
     color:white;
     position:relative;
+    margin-left:27vw;
     h3{
         display:flex;
         .oScore{
@@ -91,6 +92,7 @@ section{
   }
 
   .winner{animation:0.5s forwards courtainFall;}
+
   .winner__alert{
       position:absolute;
       width:99vh;
@@ -107,7 +109,6 @@ section{
       font-weight: 600;
       color: rgba(70, 68, 51, 1);
       opacity:0;
-
   }
   spam{
       font-size: 3rem;

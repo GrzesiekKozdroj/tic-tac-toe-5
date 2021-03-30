@@ -136,13 +136,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $('.winner__alert').on('click',()=>{
         if(!offline){ socket.emit( 'make new board')  } else { makeNewBoard() };
-        $('.winner__alert').toggleClass('winner').text('');
+        $('.winner__alert').removeClass('winner').text('');
     })
 
     function winner(score){
         let c
         if(score===s1){xScore++;$('.xScore').text(xScore); c = s1}else{oScore++;$('.oScore').text(oScore);c=s2};
-        $('.winner__alert').toggleClass('winner').html(`<p>the winner is </p><spam>${c}</spam><p> click here to play again</p>`);
+        $('.winner__alert')
+            .addClass('winner')
+            .html(`<p>the winner is </p><spam>${c}</spam><p> click here to play again</p>`);
     }
 
     function checkForWinner() {

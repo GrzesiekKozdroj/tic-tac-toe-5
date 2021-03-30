@@ -41,12 +41,13 @@ section {
 .score {
   display: flex;
   flex-flow: column;
-  width: 10vw;
+  width: 5vw;
   height: 15vh;
   align-items: flex-end;
   text-align: right;
   color: white;
   position: relative;
+  margin-left: 27vw;
 }
 
 .score h3 {

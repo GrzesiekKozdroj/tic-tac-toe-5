@@ -1,15 +1,27 @@
 # tic-tac-toe-5
--jQuery<br/>
--node.js<br/>
-A simple game I used to enjoy in primary school. <br/>
-Its aim is to place 5 squares or circles in one row.<br/>
-in below deployment game mode is hot seats:<br/>
-https://grzesiekkozdroj.github.io/tic-tac-toe-5/ <br/>
-if you would download this repository it has built in simple server so the game can be enjoyed in pvp mode online. <br/>
-it also has a chat as built in feature and the game itself detect wheather players use online or offline mode (if server is running or not)<br/>
-run command node index and connect to <br/>
-http://localhost:3001/ <br/>
-![game pic](https://raw.githubusercontent.com/GrzesiekKozdroj/tic-tac-toe-5/master/Screenshot%20from%202020-03-17%2014-22-51.png)
+
+in below deployment, game mode is hot seats, you take turns locally:
+
+## [play game](https://grzesiekkozdroj.github.io/tic-tac-toe-5/)
+
+### Description
+
+An alternative version to classical tic-tac-toe, but giving more options since instead of only 3 in row you need to place 5. It is a simple yet enjoyable game I used to enjoy in primary school.
+
+### Technologies
+
+* jQuery<br/> - v 3.2.1
+* socket.io - v 2.4.0
+* node.js
+
+### Screenshots
+
 ![winner pic](https://raw.githubusercontent.com/GrzesiekKozdroj/tic-tac-toe-5/master/Screenshot%20from%202020-03-17%2014-18-54.png)
 
+![game pic](https://raw.githubusercontent.com/GrzesiekKozdroj/tic-tac-toe-5/master/Screenshot%20from%202020-03-17%2014-22-51.png)
 
+### Setup
+
+this game doesn't work in usual game and at the time of making it I was learning concepts of node for first tiem ever. You need to have installed node globally, open terminal in this folder and type in `node -v`. If you do not have one pIease install it.<br/>
+
+Once you have node and npm in the terminal run command `node index` to start the server and go to `http://localhost:3001/` to see the game deployed with node server and socket.io as well as chat options. This game has no lobbies and separate game rooms.
