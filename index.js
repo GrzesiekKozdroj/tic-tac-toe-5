@@ -99,5 +99,5 @@ controller(app);
 //listen to port
 const PORT = process.env.PORT || 3001
 serv.listen(PORT);
-console.log('http://localhost:3001/')
+console.log(`http://localhost:${PORT}/`)
 
