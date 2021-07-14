@@ -12,13 +12,12 @@ section{
 #msg{
     border:1px solid darkolivegreen;
     width:30vw;
-    height:10vh;
+    height: 40vh;
     background-color:lightslategray;
     overflow-y:scroll;
     .span{
-        font-size:1.6vw;
+        font-size:1vw;
         word-wrap:break-word;
-
     }
 }
 #chat-input{

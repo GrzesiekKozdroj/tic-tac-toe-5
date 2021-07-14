@@ -55,6 +55,13 @@ io.sockets.on('connection', (socket) => {
         PLAYER_LIST[socket.id].board_update = data.coords;
         serverMSG('server update', data.id);
     });
+    const info = 'make sure you have oponent to play on: <a class="msgLink" target="_blank" href="https://larhs-tic-tac-toe-five.herokuapp.com/">https://larhs-tic-tac-toe-five.herokuapp.com/</a>'
+    socket.emit('chat msg', {
+        playerName:'server', 
+        messageVal: PLAYER_LIST[socket.id].turn ? 
+            `Its your turn, ${info}`:
+            `Its, your opponent turn, ${info}`
+    })
     socket.on('make new board', ()=>{
         for (let b in SOCKET_LIST) {
             let socket = SOCKET_LIST[b];
