@@ -1,7 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@900&display=swap");
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  font-family: 'lato';
 }
 
 body {
@@ -13,6 +15,10 @@ section {
   justify-content: center;
 }
 
+.chat {
+  font-weight: 700;
+}
+
 #msg {
   border: 1px solid darkolivegreen;
   width: 30vw;
@@ -21,13 +27,13 @@ section {
   overflow-y: scroll;
 }
 
-#msg .span {
+.span {
   font-size: 1vw;
   word-wrap: break-word;
 }
 
 #chat-input {
-  width: 30vw;
+  width: 100%;
 }
 
 .singleMessage {
@@ -39,14 +45,17 @@ section {
 }
 
 .score {
+  margin-left: 9vw;
+  font-family: 'lato';
+  font-weight: 700;
   display: flex;
-  flex-flow: column;
-  height: 15vh;
-  align-items: flex-end;
+  flex-wrap: wrap;
+  width: 20%;
+  height: 5vh;
   text-align: right;
   color: white;
   position: relative;
-  margin-left: 27vw;
+  justify-content: space-evenly;
 }
 
 .score h3 {
@@ -83,16 +92,34 @@ section {
 
 @media only screen and (max-width: 800px) {
   section {
-    flex-flow: column;
+    flex-wrap: wrap;
   }
   .score {
-    width: 100vw;
+    margin-left: 0;
+    width: 100%;
+    height: 37vh;
     display: flex;
     flex-flow: row;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   .score h3 {
-    justify-content: space-between;
+    justify-content: center;
+    width: 42%;
+  }
+  .chat {
+    width: 99%;
+    height: 27vh;
+  }
+  .chat #msg {
+    width: 100%;
+    height: 19vh;
+  }
+  .chat #msg .span {
+    font-size: medium;
+  }
+  .chat #chat-input {
+    height: 7vh;
   }
 }
 
@@ -143,8 +170,8 @@ spam {
 
 #ttt5 {
   background-color: #091309;
-  min-width: 100vh;
-  min-height: 100vh;
+  width: 100vh;
+  height: 100vh;
   margin: auto;
   display: flex;
   justify-content: center;

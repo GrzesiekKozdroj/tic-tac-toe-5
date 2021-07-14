@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@900&display=swap');
 *{
     box-sizing: border-box;
     padding:0; margin:0;
+    font-family:'lato';
 }
 body{
     background-color: rgb(9, 19, 9);
@@ -9,19 +11,22 @@ section{
     display:flex;
     justify-content: center;
 }
+.chat{
+    font-weight: 700;
+}
 #msg{
     border:1px solid darkolivegreen;
     width:30vw;
     height: 40vh;
     background-color:lightslategray;
     overflow-y:scroll;
-    .span{
-        font-size:1vw;
-        word-wrap:break-word;
-    }
+}
+.span{
+    font-size:1vw;
+    word-wrap:break-word;
 }
 #chat-input{
-    width:30vw;
+    width:100%;
 }
 .singleMessage{
     display:flex;
@@ -31,15 +36,18 @@ section{
     overflow: auto;
 }
 .score{
+    margin-left: 9vw;
+    font-family: 'lato';
+    font-weight: 700;
     display:flex;
-    flex-flow:column;
-    //width:5vw;
-    height:15vh;
-    align-items: flex-end;
+    //flex-flow:column;
+    flex-wrap: wrap;
+    width:20%;
+    height:5vh;
     text-align: right;
     color:white;
     position:relative;
-    margin-left:27vw;
+    //margin-left:27vw;
     h3{
         display:flex;
         .oScore{
@@ -50,6 +58,7 @@ section{
             color:yellow;
         }
     }
+    justify-content: space-evenly;
 }
 @keyframes incomer {
     0%{transform:scale(.8);}
@@ -62,16 +71,33 @@ section{
 }
 @media only screen and (max-width: 800px) {
     section {
-      flex-flow:column;
+      flex-wrap:wrap;
     }
     .score{
-        width:100vw;
+        margin-left:0;
+        width:100%;
+        height:37vh;
         display: flex;
         flex-flow:row;
-        justify-content:space-between;
+        flex-wrap:wrap;
+        justify-content:center;
         h3{
-            justify-content: space-between;
-
+            justify-content: center;
+            width:42%;
+        }
+    }
+    .chat{
+        width:99%;
+        height:27vh;
+        #msg{
+            width:100%;
+            height:19vh;
+            .span{
+                font-size: medium;
+            }
+        }
+        #chat-input{
+            height:7vh;
         }
     }
   }
@@ -116,8 +142,8 @@ section{
   }
 #ttt5{
     background-color: rgb(9, 19, 9);
-    min-width: 100vh;
-    min-height: 100vh;
+    width: 100vh;
+    height: 100vh;
     margin:auto;
     display:flex;
     justify-content:center;
