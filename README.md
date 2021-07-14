@@ -1,8 +1,8 @@
 # tic-tac-toe-5
 
-in below deployment, game mode is hot seats, you take turns locally:
+in below heroku deployment, you can have two players chatting and playing the game:
 
-## [play game](https://grzesiekkozdroj.github.io/tic-tac-toe-5/)
+## [play game](https://larhs-tic-tac-toe-five.herokuapp.com/)
 
 ### Description
 

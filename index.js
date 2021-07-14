@@ -48,7 +48,6 @@ io.sockets.on('connection', (socket) => {
     turn++;
     PLAYER_LIST[socket.id].turn = turn % 2 === 0 ? false : true;
     socket.emit('id', { id: socket.id, turn: PLAYER_LIST[socket.id].turn })
-    console.log('socket connection');
     socket.on('board update', (data) => {
         for (let player in PLAYER_LIST) {
             PLAYER_LIST[player].board_update = '';
@@ -85,7 +84,6 @@ io.sockets.on('connection', (socket) => {
     socket.on('disconnect', () => {
         delete SOCKET_LIST[socket.id];
         delete PLAYER_LIST[socket.id];
-        console.log("player left");
     });
 })
 
@@ -99,6 +97,7 @@ app.use(express.static(__dirname + '/'));
 controller(app);
 
 //listen to port
-serv.listen(3001);
+const PORT = process.env.PORT || 3001
+serv.listen(PORT);
 console.log('http://localhost:3001/')
 
