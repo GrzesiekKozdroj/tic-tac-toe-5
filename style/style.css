@@ -114,6 +114,7 @@ section {
   .chat #msg {
     width: 100%;
     height: 19vh;
+    padding-right: 4px;
   }
   .chat #msg .span {
     font-size: medium;

@@ -3,95 +3,70 @@ const express = require('express');
 const app = express();
 const controller = require('./js/controller');
 const serv = require('http').Server(app);
-let SOCKET_LIST = {};
-let PLAYER_LIST = {};
+let SOCKET_LIST = {'1':{}}
 
 const io = require('socket.io')(serv, {});
 
 class Player {
-    constructor(id) {
+    constructor(id, room, turn) {
         this.id = id;
-        this.turn = true;
+        this.room = room;
+        this.turn = turn;
         this.board_update = '';
         this.hover_in = '';
         this.hover_out = '';
-        this.origin_id = id;
-    }
-}
-let serverMSG = (message, origin_id) => {
-    let pack = [];
-    for (let a in PLAYER_LIST) {
-        let player = PLAYER_LIST[a];
-        player.turn = player.turn && message === 'server update' ? false : true;
-        pack.push({
-             board_update: player.board_update,
-             hover_in: player.hover_in, 
-             hover_out: player.hover_out, 
-             turn: player.turn, 
-             id: player.id, 
-             origin_id: origin_id,
-            });
-    }
-    for (let b in SOCKET_LIST) {
-        let socket = SOCKET_LIST[b];
-        socket.emit(message, pack);
-    }
-}
+    };
+};
 
+const info = 'make sure you have oponent to play on: <a class="msgLink" target="_blank" href="https://larhs-tic-tac-toe-five.herokuapp.com/">https://larhs-tic-tac-toe-five.herokuapp.com/</a>';
 let turn = 1;
 io.sockets.on('connection', (socket) => {
-    //unique id for each player in here
-    socket.id = Math.random();
-    SOCKET_LIST[socket.id] = socket;
-    let player = new Player(socket.id);
-    PLAYER_LIST[socket.id] = player;
+    const id = Math.random()+'';
+    const newRoom = Math.random()+'';
+    let oldRoom = false;
     turn++;
-    PLAYER_LIST[socket.id].turn = turn % 2 === 0 ? false : true;
-    socket.emit('id', { id: socket.id, turn: PLAYER_LIST[socket.id].turn })
-    socket.on('board update', (data) => {
-        for (let player in PLAYER_LIST) {
-            PLAYER_LIST[player].board_update = '';
+    let turner = turn = turn % 2 === 0 ? false : true;
+    for(let r in SOCKET_LIST){
+        if( Object.keys(SOCKET_LIST[r]).length < 2 ){
+            oldRoom = r;
         }
-        PLAYER_LIST[socket.id].board_update = data.coords;
-        serverMSG('server update', data.id);
-    });
-    const info = 'make sure you have oponent to play on: <a class="msgLink" target="_blank" href="https://larhs-tic-tac-toe-five.herokuapp.com/">https://larhs-tic-tac-toe-five.herokuapp.com/</a>'
+    };
+    if( oldRoom ){
+        socket.player = new Player(id, oldRoom, turner);
+        SOCKET_LIST[oldRoom][id] = socket;
+    } else {
+        socket.player = new Player(id, newRoom, turner)
+        SOCKET_LIST[newRoom] = {};
+        SOCKET_LIST[newRoom][id] = socket;
+        oldRoom = newRoom;
+    };
+    socket.emit('id', {id: socket.id, room: oldRoom, turn: socket.player.turn });
     socket.emit('chat msg', {
         playerName:'server', 
-        messageVal: PLAYER_LIST[socket.id].turn ? 
+        messageVal: socket.player.turn ? 
             `Its your turn, ${info}`:
             `Its, your opponent turn, ${info}`
-    })
+    });
     socket.on('make new board', ()=>{
-        for (let b in SOCKET_LIST) {
-            let socket = SOCKET_LIST[b];
-            socket.emit('make new board');
-        }        
-    })
-    socket.on('hoverin', (data) => {
-        for (let player in PLAYER_LIST) {
-            PLAYER_LIST[player].hover_in = '';
-        }
-        PLAYER_LIST[socket.id].hover_in = data.coords;
-        serverMSG('server hoverin', data.id);
+            console.log('made new board');
+        for (let r in SOCKET_LIST[socket.player.room]) {
+            SOCKET_LIST[socket.player.room][r].emit('make new board');
+        };
     });
-    socket.on('hoverout', (data) => {
-        for (let player in PLAYER_LIST) {
-            PLAYER_LIST[player].hover_out = '';
-        }
-        PLAYER_LIST[socket.id].hover_out = data.coords;
-        serverMSG('server hoverout', data.id);
-    });
-    socket.on('msg recieved',(message)=>{
-        let playerName = (""+socket.id).slice(2,7);
-        for(let i in SOCKET_LIST){
-            SOCKET_LIST[i].emit('chat msg', {playerName:playerName, messageVal:message})
-        }
+    socket.on('board update', data => serverMSG('server update', data) );
+    socket.on('hoverin', data =>  serverMSG('server hoverin', data)  );
+    socket.on('hoverout', data => serverMSG('server hoverout', data) );
+    socket.on('msg recieved', (data)=>{
+        let playerName = (""+socket.player.id).slice(2,7);
+        const { message, room } = data
+            for(let i in SOCKET_LIST[room]){
+                SOCKET_LIST[room][i].emit('chat msg', { playerName, messageVal:message})
+            }
     })
     socket.on('disconnect', () => {
-        delete SOCKET_LIST[socket.id];
-        delete PLAYER_LIST[socket.id];
-    });
+        delete SOCKET_LIST[socket.player.room][socket.player.id];
+    })
+
 })
 
 //set up a template engine
@@ -108,3 +83,24 @@ const PORT = process.env.PORT || 3001
 serv.listen(PORT);
 console.log(`http://localhost:${PORT}/`)
 
+
+let serverMSG = (message, data) => {
+    const { coords, id, room } = data
+    let pack = [];
+    for (let a in SOCKET_LIST[room]) {
+        let player = SOCKET_LIST[room][a]
+        player.turn = player.turn && message === 'server update' ? false : true;
+        pack.push({
+             board_update: player.board_update,
+             hover_in: player.hover_in, 
+             hover_out: player.hover_out, 
+             turn: player.turn, 
+             id: player.id, 
+             origin_id: data,
+            });
+    }
+    for (let b in SOCKET_LIST[room]) {
+        let socket = SOCKET_LIST[room][b];
+        socket.emit(message, pack);
+    }
+}

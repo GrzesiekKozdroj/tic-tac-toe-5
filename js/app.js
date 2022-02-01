@@ -13,11 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let boardSize = 20;
     let moveCount;
     let ajdee = 0;
+    let room = null
     socket.on('id',(data)=>{
         if(ajdee===0){
             ajdee=data.id;
             gamer=data.turn;
             offline = false;
+            room = data.room
         }
     });
     const msg = $("#msg");
@@ -26,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     chatForm.on('submit', (e)=>{
         e.preventDefault();
-        socket.emit('msg recieved',chatInput.val());
+        socket.emit('msg recieved',{message:chatInput.val(),room});
         chatInput.val('');
     });
     
@@ -72,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 $(this).css('background',color);
                 moveCount++;
                 let coords = $(this).data("xy");
-                socket.emit('board update',{coords:coords,id:ajdee});
+                socket.emit('board update',{coords,id:ajdee, room});
                 checkForWinner();
             }
         });
@@ -94,11 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     socket.on('server update',(data)=>{
+        console.log(data)
                 moveCount++;
                 checkForWinner();
         data.forEach(player=>{
-            if(ajdee!==player.origin_id){
-                $(`div[data-xy = "${ player.board_update }"]`).text(s2).css('background',c2).addClass('incomin');
+            if(ajdee!==player.id){
+                $(`div[data-xy = "${ player.origin_id.coords }"]`).text(s2).css('background',c2).addClass('incomin');
                 gamer = true;
             }
         })
