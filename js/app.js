@@ -51,7 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         $('#board').off();
         moveCount = 1;
-        addClicks();addHover()
+        addClicks()
+        addHover()
+        $('.winner__alert').removeClass('winner').text('')
     }
 
 
@@ -74,8 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 $(this).css('background',color);
                 moveCount++;
                 let coords = $(this).data("xy");
-                socket.emit('board update',{coords,id:ajdee, room});
-                checkForWinner();
+                socket.emit('board update',{coords, id:ajdee, room});
             }
         });
     }
@@ -86,69 +87,78 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if(gamer && offline) $(this).css('background-color',c2);
                 else if(!offline)          $(this).css('background-color',c1);}
             let coords = $(this).data("xy");
-            socket.emit('hoverin',{coords:coords,id:ajdee})   
+            socket.emit('hoverin',{coords,room,id:ajdee})   
         })
         $('.square').mouseleave(function(){
             if($(this).text()===''){  $(this).css('background-color','rgb(235, 235, 207)');}
             let coords = $(this).data("xy");
-            socket.emit('hoverout',{coords:coords,id:ajdee})  
+            socket.emit('hoverout',{coords,room,id:ajdee})  
         })
     }
 
     socket.on('server update',(data)=>{
-        console.log(data)
-                moveCount++;
-                checkForWinner();
-        data.forEach(player=>{
-            if(ajdee!==player.id){
-                $(`div[data-xy = "${ player.origin_id.coords }"]`).text(s2).css('background',c2).addClass('incomin');
-                gamer = true;
-            }
-        })
+        const { room, coords, id, turn } = data
+        moveCount++;
+        checkForWinner()
+        if( ajdee !== id ){
+            $(`div[data-xy = "${ coords }"]`).text(s2).css('background',c2).addClass('incomin');
+            gamer = true;
+        }
     });
     socket.on('make new board', ()=>{makeNewBoard()})
 
     socket.on('server hoverin',(data)=>{
-        data.forEach(player=>{
-            if(ajdee!==player.origin_id && player.hover_in!==''){
-                if($(`div[data-xy = "${player.hover_in}"]`).text()==s1){
-                    $(`div[data-xy = "${player.hover_in}"]`).css('transform','scale(.9)');
-                }else if($(`div[data-xy = "${player.hover_in}"]`).text()===s2){
-                    $(`div[data-xy = "${player.hover_in}"]`).removeClass('incomin').css('transform','scale(.9)');
-                }else{
-                    $(`div[data-xy = "${player.hover_in}"]`).css('background',c2).css('transform','scale(.9)');
-                }
+        const { room, coords, id} = data
+        if(ajdee!==id){
+            if($(`div[data-xy = "${ coords }"]`).text()==s1){
+                $(`div[data-xy = "${ coords }"]`).css('transform','scale(.9)');
+            }else if($(`div[data-xy = "${ coords }"]`).text()===s2){
+                $(`div[data-xy = "${ coords }"]`).removeClass('incomin').css('transform','scale(.9)');
+            }else{
+                $(`div[data-xy = "${ coords }"]`).css('background',c2).css('transform','scale(.9)');
             }
-        })
+        }
     });
 
     socket.on('server hoverout', (data)=>{
-        data.forEach(player=>{
-            if(ajdee!==player.origin_id && player.hover_out!==''){
-                if($(`div[data-xy = "${player.hover_out}"]`).text()===s1){
-                    $(`div[data-xy = "${player.hover_out}"]`).css('transform','scale(1)');
-                }else if($(`div[data-xy = "${player.hover_out}"]`).text()===s2){
-                    $(`div[data-xy = "${player.hover_out}"]`).css('transform','scale(1)');
-                }else{
-                    $(`div[data-xy = "${player.hover_out}"]`).css('background','rgb(235, 235, 207)').css('transform','scale(1)');
-                }
+        const { room, coords ,id } = data
+        if(ajdee!==id){
+            if($(`div[data-xy = "${ coords }"]`).text()===s1){
+                $(`div[data-xy = "${ coords }"]`).css('transform','scale(1)');
+            }else if($(`div[data-xy = "${ coords }"]`).text()===s2){
+                $(`div[data-xy = "${ coords }"]`).css('transform','scale(1)');
+            }else{
+                $(`div[data-xy = "${ coords }"]`).css('background','rgb(235, 235, 207)').css('transform','scale(1)');
             }
-        })
+        }
     })
-    
+
 
     $('.winner__alert').on('click',()=>{
         if(!offline){ socket.emit( 'make new board')  } else { makeNewBoard() };
-        $('.winner__alert').removeClass('winner').text('');
     })
 
     function winner(score){
+        if(score==='X'){
+            socket.emit('winner', { id:ajdee, room})
+        }
+    }
+    socket.on('server winner', data => {
+        const { id } = data
         let c
-        if(score===s1){xScore++;$('.xScore').text(xScore); c = s1}else{oScore++;$('.oScore').text(oScore);c=s2};
+        if(id===ajdee){
+            xScore++
+            $('.xScore').text(xScore)
+            c = s1
+        } else {
+            oScore++
+            $('.oScore').text(oScore)
+            c=s2
+        }
         $('.winner__alert')
             .addClass('winner')
             .html(`<p>the winner is </p><spam>${c}</spam><p> click here to play again</p>`);
-    }
+    })
 
     function checkForWinner() {
         let $square = $('.square');

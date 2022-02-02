@@ -40,7 +40,7 @@ io.sockets.on('connection', (socket) => {
         SOCKET_LIST[newRoom][id] = socket;
         oldRoom = newRoom;
     };
-    socket.emit('id', {id: socket.id, room: oldRoom, turn: socket.player.turn });
+    socket.emit('id', {id: socket.player.id, room: oldRoom, turn: socket.player.turn });
     socket.emit('chat msg', {
         playerName:'server', 
         messageVal: socket.player.turn ? 
@@ -48,7 +48,6 @@ io.sockets.on('connection', (socket) => {
             `Its, your opponent turn, ${info}`
     });
     socket.on('make new board', ()=>{
-            console.log('made new board');
         for (let r in SOCKET_LIST[socket.player.room]) {
             SOCKET_LIST[socket.player.room][r].emit('make new board');
         };
@@ -56,6 +55,7 @@ io.sockets.on('connection', (socket) => {
     socket.on('board update', data => serverMSG('server update', data) );
     socket.on('hoverin', data =>  serverMSG('server hoverin', data)  );
     socket.on('hoverout', data => serverMSG('server hoverout', data) );
+    socket.on('winner', data => serverMSG('server winner', data))
     socket.on('msg recieved', (data)=>{
         let playerName = (""+socket.player.id).slice(2,7);
         const { message, room } = data
@@ -85,22 +85,10 @@ console.log(`http://localhost:${PORT}/`)
 
 
 let serverMSG = (message, data) => {
-    const { coords, id, room } = data
-    let pack = [];
-    for (let a in SOCKET_LIST[room]) {
-        let player = SOCKET_LIST[room][a]
-        player.turn = player.turn && message === 'server update' ? false : true;
-        pack.push({
-             board_update: player.board_update,
-             hover_in: player.hover_in, 
-             hover_out: player.hover_out, 
-             turn: player.turn, 
-             id: player.id, 
-             origin_id: data,
-            });
-    }
-    for (let b in SOCKET_LIST[room]) {
-        let socket = SOCKET_LIST[room][b];
-        socket.emit(message, pack);
+    const { room, coords, id } = data
+    for(let player in SOCKET_LIST[room]){
+        const specimen = SOCKET_LIST[room][player].player
+        specimen.turn = specimen.turn && message === 'server update' ? false : true
+        SOCKET_LIST[room][player].emit(message, {room, coords, id, turn:specimen.turn})
     }
 }
